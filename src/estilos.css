@@ -166,7 +166,7 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--brand); out
 .chip.quitable { display: inline-flex; align-items: center; gap: 4px; padding: 4px 4px 4px 12px; background: var(--bg); }
 .chip.quitable button { border: 0; background: none; color: var(--muted); font-size: 20px; width: 34px; height: 34px; }
 .filtros { margin-bottom: 14px; }
-.filtros .chip { flex: 1; }
+.filtros .chip { flex: 1; min-width: 0; padding: 10px 4px; font-size: 14px; overflow-wrap: anywhere; }
 
 .seg { display: flex; background: var(--soft); border-radius: 10px; padding: 3px; margin-bottom: 14px; }
 .seg button { flex: 1; border: 0; background: none; padding: 10px 8px; border-radius: 8px; font-weight: 600; color: var(--muted); }
