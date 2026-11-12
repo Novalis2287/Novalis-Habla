@@ -1,0 +1,41 @@
+// Datos de ejemplo INVENTADOS para el modo demostración (sin base de datos configurada).
+// Ninguno corresponde a un paciente real.
+import { hoy, sumarDias, sumarMeses } from './util.js';
+
+const id = n => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
+
+export function datosDeEjemplo() {
+  const h = hoy();
+  const p = (n, nombre, telefono, extra = {}) => ({
+    id: id(n), nombre, telefono, proxima_revision: null, recordatorio_enviado: null,
+    primera_visita: null, origen: null, estado_plan: null, volver_a_llamar: null,
+    creado: new Date().toISOString(), ...extra,
+  });
+  return {
+    usuarios: [{ email: 'demo@ejemplo.com', nombre: 'Demostración', admin: true }],
+    pacientes: [
+      p(1, 'Lucía Ejemplo Prueba', '600 000 001', { proxima_revision: sumarDias(h, -12) }),
+      p(2, 'Marcos Ficticio Demo', '600 000 002', { proxima_revision: sumarDias(h, 9), primera_visita: sumarDias(h, -20), origen: 'Google', estado_plan: 'pensando', volver_a_llamar: sumarDias(h, -1) }),
+      p(3, 'Elena Inventada Muestra', '600 000 003', { proxima_revision: sumarMeses(h, 4), primera_visita: sumarDias(h, -8), origen: 'Recomendación', estado_plan: 'aceptado' }),
+      p(4, 'Pablo Simulado Test', '600 000 004', { primera_visita: sumarDias(h, -15), origen: 'Redes sociales', estado_plan: 'no_aceptado' }),
+      p(5, 'Carmen Modelo Ensayo', '600 000 005', { proxima_revision: sumarDias(h, 25), primera_visita: sumarDias(h, -40), origen: 'Recomendación', estado_plan: 'pensando', volver_a_llamar: sumarDias(h, 5) }),
+      p(6, 'Javier Supuesto Ejemplo', '600 000 006', { proxima_revision: sumarDias(h, -45), recordatorio_enviado: sumarDias(h, -3) }),
+    ],
+    anotaciones: [
+      { id: id(101), paciente_id: id(2), fecha: new Date(Date.now() - 6 * 86400000).toISOString(), texto: 'Llamada: lo está pensando, pide que le llamemos la semana que viene.', autor: 'Demostración' },
+    ],
+    envios: [
+      { id: id(201), paciente_id: id(6), fecha: new Date(Date.now() - 3 * 86400000).toISOString(), tipo: 'mensaje', titulo: 'Recordatorio de revisión', texto: 'Hola Javier, te escribimos de Clínica Novalis. Ya toca tu revisión semestral.', autor: 'Demostración' },
+    ],
+    plantillas: [
+      { id: id(301), titulo: 'Recordatorio de revisión', uso: 'revision', texto: 'Hola {nombre}, te escribimos de Clínica Novalis. Ya toca tu revisión semestral. ¿Te viene bien que te demos cita? Puedes responder a este mensaje o llamarnos. ¡Gracias!' },
+      { id: id(302), titulo: 'Envío de documento', uso: 'pdf', texto: 'Hola {nombre}, te enviamos desde Clínica Novalis el documento «{documento}»: {enlace}' },
+      { id: id(303), titulo: 'Indicaciones tras el tratamiento', uso: 'general', texto: 'Hola {nombre}, esperamos que te encuentres bien tras el tratamiento de hoy. Si tienes cualquier molestia o duda, escríbenos o llámanos. Clínica Novalis.' },
+    ],
+    documentos: [
+      { id: 'ejemplo1', titulo: 'Cuidados tras una extracción', descripcion: 'Indicaciones para las primeras 48 horas', ruta: '', creado: new Date().toISOString() },
+      { id: 'ejemplo2', titulo: 'Higiene con ortodoncia', descripcion: 'Cómo cepillarse con brackets', ruta: '', creado: new Date().toISOString() },
+    ],
+    ajustes: [{ clave: 'origenes', valor: ['Recomendación', 'Google', 'Redes sociales', 'Pasaba por la clínica', 'Otro'] }],
+  };
+}
