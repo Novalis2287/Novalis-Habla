@@ -47,6 +47,29 @@ export function telefonoWhatsApp(telefono) {
 export const enlaceWhatsApp = (telefono, texto) =>
   `https://wa.me/${telefonoWhatsApp(telefono)}?text=${encodeURIComponent(texto)}`;
 
+// Enlaces fijos de la clínica. Los mensajes no llevan la dirección final sino una página
+// de la app, que es la que enseña la tarjeta de vista previa en WhatsApp y lleva al destino.
+export const enlacesFijos = () => ({
+  enlace_maps: `${location.origin}/ubicacion`,
+  enlace_conocenos: `${location.origin}/conocenos`,
+  enlace_instagram: `${location.origin}/instagram`,
+  enlace_facebook: `${location.origin}/facebook`,
+});
+
+// Reduce una foto del móvil a un JPEG ligero (y sin los datos ocultos de la cámara) antes de subirla.
+export async function reducirFoto(archivo, lado = 1600) {
+  const imagen = await createImageBitmap(archivo, { imageOrientation: 'from-image' });
+  const escala = Math.min(1, lado / Math.max(imagen.width, imagen.height));
+  const lienzo = document.createElement('canvas');
+  lienzo.width = Math.round(imagen.width * escala);
+  lienzo.height = Math.round(imagen.height * escala);
+  lienzo.getContext('2d').drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
+  imagen.close?.();
+  const foto = await new Promise(hecho => lienzo.toBlob(hecho, 'image/jpeg', 0.85));
+  if (!foto) throw new Error('foto_no_valida');
+  return foto;
+}
+
 // Sustituye {nombre}, {documento}, {enlace}… en una plantilla.
 export function rellenar(texto, datos) {
   return String(texto ?? '').replace(/\{(\w+)\}/g, (todo, clave) => (clave in datos ? datos[clave] : todo));
@@ -63,5 +86,6 @@ export const nombreEstado = id => ESTADOS.find(e => e.id === id)?.nombre ?? '';
 export const MESES_REVISION = 6;
 export const DIAS_AVISO = 30; // una revisión es "próxima" si falta este número de días o menos
 
-export const idCorto = () => Array.from(crypto.getRandomValues(new Uint8Array(8)), b => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('');
+// Id aleatorio. Con 8 caracteres sirve para documentos; con 32 es imposible de adivinar (páginas de pacientes).
+export const idCorto = (largo = 8) => Array.from(crypto.getRandomValues(new Uint8Array(largo)), b => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('');
 export const nuevoId = () => crypto.randomUUID();

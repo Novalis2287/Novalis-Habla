@@ -11,7 +11,7 @@ export const DEMO = !URL_BD || !CLAVE_BD;
 export const supabase = DEMO ? null : createClient(URL_BD, CLAVE_BD);
 
 /* ---------- modo demostración ---------- */
-const CLAVE_DEMO = 'novalis-habla-demo-v1';
+const CLAVE_DEMO = 'novalis-habla-demo-v2';
 function leerDemo() {
   try { const d = JSON.parse(localStorage.getItem(CLAVE_DEMO)); if (d) return d; } catch { /* empezar de cero */ }
   return datosDeEjemplo();
@@ -58,7 +58,7 @@ export async function borrar(tabla, valor, clave = 'id') {
     const d = leerDemo();
     d[tabla] = (d[tabla] ?? []).filter(f => f[clave] !== valor);
     // Igual que en la base de datos real: al borrar un paciente se van sus anotaciones y envíos.
-    if (tabla === 'pacientes') for (const t of ['anotaciones', 'envios']) d[t] = (d[t] ?? []).filter(f => f.paciente_id !== valor);
+    if (tabla === 'pacientes') for (const t of ['anotaciones', 'envios', 'paginas']) d[t] = (d[t] ?? []).filter(f => f.paciente_id !== valor);
     escribirDemo(d);
     return;
   }
@@ -79,6 +79,47 @@ export async function borrarDocumento(doc) {
 // Enlace que se manda al paciente: una página con vista previa que abre el PDF.
 export const enlaceDocumento = doc => `${location.origin}/d/${doc.id}`;
 export const urlPdf = doc => (DEMO || !doc.ruta ? '' : supabase.storage.from('documentos').getPublicUrl(doc.ruta).data.publicUrl);
+
+/* ---------- páginas personales de pacientes (fotos intraorales y PDF) ---------- */
+export const DIAS_PAGINA = 30; // la página y sus fotos dejan de estar disponibles pasado este plazo
+export const enlacePagina = pagina => `${location.origin}/p/${pagina.id}`;
+
+// Sube las fotos al almacén privado y crea la página. "fotos" son JPEG ya reducidos.
+export async function crearPagina({ pacienteId, documentos, fotos, autor }) {
+  const fila = {
+    id: idCorto(32), paciente_id: pacienteId, documentos, fotos: [], autor,
+    creado: new Date().toISOString(), caduca: new Date(Date.now() + DIAS_PAGINA * 86400000).toISOString(),
+  };
+  if (DEMO || !fotos.length) return guardar('paginas', fila);
+  const rutas = [];
+  try {
+    for (const foto of fotos) {
+      const ruta = `${pacienteId}/${idCorto(32)}.jpg`;
+      ok(await supabase.storage.from('fotos').upload(ruta, foto, { contentType: 'image/jpeg' }));
+      rutas.push(ruta);
+    }
+    // Enlaces firmados: solo sirven para esa foto y caducan a la vez que la página.
+    const firmadas = ok(await supabase.storage.from('fotos').createSignedUrls(rutas, DIAS_PAGINA * 86400));
+    fila.fotos = firmadas.map((f, i) => { if (f.error || !f.signedUrl) throw new Error('foto_sin_enlace'); return { ruta: rutas[i], url: f.signedUrl }; });
+    return await guardar('paginas', fila);
+  } catch (e) {
+    // Si algo falla a medias no se dejan fotos sueltas en el almacén.
+    if (rutas.length) await supabase.storage.from('fotos').remove(rutas).catch(() => {});
+    throw e;
+  }
+}
+// Al borrar la página se borran sus fotos, y con ellas dejan de funcionar sus enlaces.
+export async function borrarPagina(pagina) {
+  const rutas = (pagina.fotos ?? []).map(f => f.ruta).filter(Boolean);
+  if (!DEMO && rutas.length) ok(await supabase.storage.from('fotos').remove(rutas));
+  await borrar('paginas', pagina.id);
+}
+export const paginasDe = pacienteId => leer('paginas', { filtro: { paciente_id: pacienteId }, orden: 'creado', desc: true });
+// Limpieza: borra las páginas caducadas (y sus fotos) que queden en la base de datos.
+export async function borrarPaginasCaducadas() {
+  const ahora = new Date().toISOString();
+  for (const p of await leer('paginas')) if (p.caduca < ahora) await borrarPagina(p);
+}
 
 /* ---------- inicio de sesión ---------- */
 const ERRORES = [

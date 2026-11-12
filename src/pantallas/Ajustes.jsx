@@ -1,5 +1,5 @@
-// Ajustes: plantillas, biblioteca de PDF, lista "cómo nos han conocido" y usuarios (solo administrador).
-import { useState } from 'react';
+// Ajustes: plantillas, biblioteca de PDF, lista "cómo nos han conocido" y, solo para el administrador, enlaces de la clínica y usuarios.
+import { useEffect, useState } from 'react';
 import { useDatos } from '../lib/almacen.jsx';
 import { DEMO, enlaceDocumento, reiniciarDemo, sesion, urlPdf } from '../lib/datos.js';
 import { Campo, Hoja, Vacio, avisar, intentar } from '../componentes.jsx';
@@ -11,6 +11,7 @@ export function Ajustes() {
       <Plantillas />
       <Documentos />
       <Origenes />
+      {yo?.admin && <Enlaces />}
       {yo?.admin && <Usuarios />}
       <div className="card">
         <h2>Sesión</h2>
@@ -34,6 +35,7 @@ export function Ajustes() {
 const AYUDA_USO = {
   revision: 'Es el mensaje que se envía con un toque desde Revisiones.',
   pdf: 'Es el texto que acompaña a cada PDF. {documento} es el título y {enlace} el enlace al documento.',
+  valoracion: 'Antes de enviarla se eligen los PDF y las fotos del paciente; {enlaces_documentos} es el enlace a su página personal.',
 };
 
 function Plantillas() {
@@ -72,6 +74,7 @@ function Plantillas() {
               <textarea rows={6} value={editando.texto} onChange={e => setEditando({ ...editando, texto: e.target.value })} />
             </Campo>
             <p className="hint arriba">{'{nombre}'} se cambia por el nombre del paciente. {AYUDA_USO[editando.uso] ?? ''}</p>
+            <p className="hint arriba">Enlaces de la clínica: {'{enlace_maps}'} (cómo llegar) y {'{enlace_conocenos}'} (Instagram y Facebook). Pon un solo enlace por mensaje: WhatsApp solo muestra la tarjeta del primero. Un texto entre asteriscos, como *Clínica Novalis*, sale en negrita.</p>
             <button className="btn" disabled={!editando.titulo.trim() || !editando.texto.trim()}>Guardar</button>
             {editando.id && !especial && <button type="button" className="link bad" onClick={eliminar}>Borrar plantilla</button>}
           </form>
@@ -170,6 +173,44 @@ function Origenes() {
         <input value={nuevo} onChange={e => setNuevo(e.target.value)} placeholder="Nueva opción…" aria-label="Nueva opción" />
         <button className="btn ghost" disabled={!nuevo.trim()}>Añadir</button>
       </form>
+    </div>
+  );
+}
+
+/* ---------- enlaces fijos de la clínica (solo administrador) ---------- */
+const CAMPOS_ENLACES = [
+  { id: 'maps', etiqueta: 'Google Maps (cómo llegar)', ver: '/ubicacion' },
+  { id: 'instagram', etiqueta: 'Instagram', ver: '/conocenos' },
+  { id: 'facebook', etiqueta: 'Facebook', ver: '/conocenos' },
+];
+const esEnlace = v => { try { return ['https:', 'http:'].includes(new URL(v).protocol); } catch { return false; } };
+
+function Enlaces() {
+  const { enlaces, guardarEnlaces } = useDatos();
+  const [v, setV] = useState(enlaces);
+  useEffect(() => { setV(enlaces); }, [enlaces]);
+  const cambiado = CAMPOS_ENLACES.some(c => v[c.id].trim() !== enlaces[c.id]);
+
+  async function guardar(e) {
+    e.preventDefault();
+    const limpio = Object.fromEntries(CAMPOS_ENLACES.map(c => [c.id, v[c.id].trim()]));
+    const mal = CAMPOS_ENLACES.find(c => limpio[c.id] && !esEnlace(limpio[c.id]));
+    if (mal) return avisar(`El enlace de ${mal.etiqueta} tiene que empezar por https://`);
+    await intentar(() => guardarEnlaces(limpio), 'Enlaces guardados');
+  }
+
+  return (
+    <div className="card">
+      <h2>Enlaces de la clínica</h2>
+      <form onSubmit={guardar}>
+        {CAMPOS_ENLACES.map(c => (
+          <Campo key={c.id} etiqueta={c.etiqueta}>
+            <input type="url" inputMode="url" autoCapitalize="none" placeholder="https://…" value={v[c.id]} onChange={e => setV({ ...v, [c.id]: e.target.value })} />
+          </Campo>
+        ))}
+        <button className="btn ghost" disabled={!cambiado}>Guardar enlaces</button>
+      </form>
+      <p className="hint">Los mensajes llevan una página de la app que muestra la tarjeta en WhatsApp y abre estos destinos. {!DEMO && <>Pruébalas: <a className="enlace" href="/ubicacion" target="_blank" rel="noopener noreferrer">cómo llegar</a> y <a className="enlace" href="/conocenos" target="_blank" rel="noopener noreferrer">conócenos</a>.</>}</p>
     </div>
   );
 }

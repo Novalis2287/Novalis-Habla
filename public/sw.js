@@ -1,6 +1,8 @@
 // Permite instalar la app y abrirla aunque falle la conexión.
 // Solo guarda los archivos de la propia app; los datos de pacientes nunca se guardan aquí.
-const CACHE = 'novalis-habla-v1';
+const CACHE = 'novalis-habla-v2';
+// Páginas que abre el paciente (documentos, enlaces de la clínica y páginas personales): siempre por la red, nunca guardadas.
+const PAGINAS = /^\/(d|p)\/|^\/(ubicacion|conocenos|instagram|facebook)\/?$/;
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(
@@ -9,8 +11,8 @@ self.addEventListener('activate', e => e.waitUntil(
 
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  // Las páginas de documentos (/d/…) y todo lo que no sea de la app van siempre por la red.
-  if (e.request.method !== 'GET' || url.origin !== location.origin || url.pathname.startsWith('/d/')) return;
+  // Esas páginas y todo lo que no sea de la app van siempre por la red.
+  if (e.request.method !== 'GET' || url.origin !== location.origin || PAGINAS.test(url.pathname)) return;
   // Primero la red (para tener siempre la última versión); si no hay conexión, la copia guardada.
   e.respondWith(
     fetch(e.request).then(res => {

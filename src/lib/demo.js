@@ -28,6 +28,10 @@ export function datosDeEjemplo() {
       { id: id(201), paciente_id: id(6), fecha: new Date(Date.now() - 3 * 86400000).toISOString(), tipo: 'mensaje', titulo: 'Recordatorio de revisión', texto: 'Hola Javier, te escribimos de Clínica Novalis. Ya toca tu revisión semestral.', autor: 'Demostración' },
     ],
     plantillas: [
+      { id: id(311), orden: 1, titulo: 'Bienvenida a Novalis', uso: 'general', texto: '{nombre}, le damos la más cordial bienvenida a Clínica Novalis.\n\nEs un placer contar con su confianza. Nuestro equipo cuida cada detalle para ofrecerle una atención personalizada y una odontología de la máxima calidad.\n\nQuedamos a su disposición por este medio para cualquier consulta.\n\n*Clínica Novalis*' },
+      { id: id(312), orden: 2, titulo: 'Cómo llegar', uso: 'general', texto: '{nombre}, para facilitarle la llegada, le compartimos nuestra ubicación:\n\n📍 {enlace_maps}\n\nSerá un placer recibirle.\n\n*Clínica Novalis*' },
+      { id: id(313), orden: 3, titulo: 'Conócenos', uso: 'general', texto: '{nombre}, le invitamos a conocer Clínica Novalis a través de la experiencia de nuestros pacientes y del trabajo que realizamos cada día:\n\n✨ {enlace_conocenos}\n\n*Clínica Novalis*' },
+      { id: id(314), orden: 4, titulo: 'Tras la valoración', uso: 'valoracion', texto: '{nombre}, gracias por su visita.\n\nTal como le comentamos en la valoración, ponemos a su disposición sus fotografías intraorales y una selección de documentos sobre salud dental, preparados por nuestro equipo para acompañarle en su tratamiento:\n\n📄 {enlaces_documentos}\n\nEste enlace es personal y confidencial. Para cualquier duda, estaremos encantados de atenderle.\n\n*Clínica Novalis*' },
       { id: id(301), titulo: 'Recordatorio de revisión', uso: 'revision', texto: 'Hola {nombre}, te escribimos de Clínica Novalis. Ya toca tu revisión semestral. ¿Te viene bien que te demos cita? Puedes responder a este mensaje o llamarnos. ¡Gracias!' },
       { id: id(302), titulo: 'Envío de documento', uso: 'pdf', texto: 'Hola {nombre}, te enviamos desde Clínica Novalis el documento «{documento}»: {enlace}' },
       { id: id(303), titulo: 'Indicaciones tras el tratamiento', uso: 'general', texto: 'Hola {nombre}, esperamos que te encuentres bien tras el tratamiento de hoy. Si tienes cualquier molestia o duda, escríbenos o llámanos. Clínica Novalis.' },
@@ -36,6 +40,10 @@ export function datosDeEjemplo() {
       { id: 'ejemplo1', titulo: 'Cuidados tras una extracción', descripcion: 'Indicaciones para las primeras 48 horas', ruta: '', creado: new Date().toISOString() },
       { id: 'ejemplo2', titulo: 'Higiene con ortodoncia', descripcion: 'Cómo cepillarse con brackets', ruta: '', creado: new Date().toISOString() },
     ],
-    ajustes: [{ clave: 'origenes', valor: ['Recomendación', 'Google', 'Redes sociales', 'Pasaba por la clínica', 'Otro'] }],
+    paginas: [],
+    ajustes: [
+      { clave: 'origenes', valor: ['Recomendación', 'Google', 'Redes sociales', 'Pasaba por la clínica', 'Otro'] },
+      { clave: 'enlaces', valor: { maps: 'https://example.com/mapa', instagram: 'https://example.com/instagram', facebook: 'https://example.com/facebook' } },
+    ],
   };
 }
