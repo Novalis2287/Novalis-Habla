@@ -42,12 +42,15 @@ export const ICONOS = {
   facebook: (tam = 28) => `<svg width="${tam}" height="${tam}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.500 21v-7.500h2.600l.400-3.100h-3V8.500c0-.900.300-1.500 1.600-1.500h1.600V4.200c-.300 0-1.200-.100-2.300-.100-2.300 0-3.900 1.400-3.900 4v2.300H7.900v3.100h2.600V21z"/></svg>`,
 };
 
+const APP = 'Novalis Habla';
+
 const ESTILO = `
   * { box-sizing: border-box; }
   body { margin: 0; min-height: 100vh; background: #f2f5f5; color: #14201f;
          font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-  header { background: #058bc0; padding: 22px 16px 54px; text-align: center; }
-  header img { height: 44px; width: auto; display: block; margin: 0 auto; }
+  header { background: #058bc0; color: #fff; padding: 20px 16px 54px; display: flex; align-items: center; justify-content: center; gap: 12px;
+           font-size: 22px; font-weight: 700; letter-spacing: -.2px; }
+  header img { width: 46px; height: 46px; display: block; border-radius: 12px; box-shadow: 0 0 0 1.5px rgba(255, 255, 255, .55); }
   main { width: min(460px, calc(100% - 32px)); margin: -34px auto 0; background: #fff; border: 1px solid #dde5e4;
          border-radius: 18px; padding: 28px 22px 24px; text-align: center; box-shadow: 0 6px 24px rgba(5, 80, 110, .08); }
   main.ancho { width: min(720px, calc(100% - 32px)); }
@@ -72,16 +75,18 @@ const ESTILO = `
 `;
 
 // Página completa. "tarjeta" son los datos de la vista previa de WhatsApp: { titulo, descripcion, imagen, url }.
+// "url" es opcional: si se indica, tiene que ser una dirección que funcione, porque algunos robots
+// van a buscar la tarjeta a esa dirección en vez de a la del enlace. "titulo" es el nombre de la pestaña.
 // Las páginas privadas no se guardan en ninguna caché ni dejan rastro de su dirección al salir de ellas.
-export function pagina({ cuerpo, tarjeta, origen, estado = 200, cabecera = '', privada = false, ancho = false }) {
-  const og = tarjeta ? `<title>${esc(tarjeta.titulo)}</title>
+export function pagina({ cuerpo, tarjeta, origen, titulo, estado = 200, cabecera = '', privada = false, ancho = false }) {
+  const og = tarjeta ? `<title>${esc(titulo ?? `${tarjeta.titulo} · ${APP}`)}</title>
 <meta name="description" content="${esc(tarjeta.descripcion)}">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Clínica Novalis">
+<meta property="og:site_name" content="${APP}">
 <meta property="og:locale" content="es_ES">
 <meta property="og:title" content="${esc(tarjeta.titulo)}">
 <meta property="og:description" content="${esc(tarjeta.descripcion)}">
-<meta property="og:url" content="${esc(tarjeta.url)}">
+${tarjeta.url ? `<meta property="og:url" content="${esc(tarjeta.url)}">` : ''}
 <meta property="og:image" content="${esc(`${origen}/${tarjeta.imagen}`)}">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -95,13 +100,16 @@ export function pagina({ cuerpo, tarjeta, origen, estado = 200, cabecera = '', p
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#058bc0">
+<meta name="application-name" content="${APP}">
+<meta name="apple-mobile-web-app-title" content="${APP}">
 <link rel="icon" type="image/png" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
 ${og}
 ${cabecera}
 <style>${ESTILO}</style>
 </head>
 <body>
-<header><img src="/icons/logo.png" alt="Novalis"></header>
+<header><img src="/icons/icon-192.png" alt=""> ${APP}</header>
 <main${ancho ? ' class="ancho"' : ''}>${cuerpo}</main>
 <footer>Clínica Novalis</footer>
 </body>

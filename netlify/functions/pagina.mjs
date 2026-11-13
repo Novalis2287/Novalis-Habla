@@ -21,9 +21,9 @@ export default async (req, context) => {
   if (!/^[a-z0-9]{32}$/.test(id)) return caducada();
 
   const origen = new URL(req.url).origin;
-  const tarjeta = { ...TARJETA, url: `${origen}/p/` }; // la dirección personal no se repite en la tarjeta
+  const tarjeta = TARJETA; // sin "og:url": la dirección personal no se repite en la tarjeta
   const portada = `${ICONOS.documento()}<h1>Tu información</h1>`;
-  if (esRobot(req)) return pagina({ origen, tarjeta, privada: true, cuerpo: `${portada}<p>${esc(TARJETA.descripcion)}</p>` });
+  if (esRobot(req)) return pagina({ origen, tarjeta, titulo: 'Novalis Habla', privada: true, cuerpo: `${portada}<p>${esc(TARJETA.descripcion)}</p>` });
 
   const datos = await bd('rpc/pagina_paciente', { method: 'POST', body: JSON.stringify({ p_id: id }) });
   if (!datos) return caducada();
@@ -33,7 +33,7 @@ export default async (req, context) => {
   const pdf = ruta => `${URL_BD}/storage/v1/object/public/documentos/${encodeURIComponent(ruta)}`;
 
   return pagina({
-    origen, tarjeta, privada: true, ancho: true,
+    origen, tarjeta, titulo: 'Novalis Habla', privada: true, ancho: true,
     cuerpo: `${portada}
 <p>Clínica Novalis ha preparado esta información para ti.</p>
 ${fotos.length ? `<h2>Tus fotografías intraorales</h2>
