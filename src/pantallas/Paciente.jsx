@@ -4,7 +4,7 @@ import { useDatos } from '../lib/almacen.jsx';
 import { DEMO, DIAS_PAGINA, enlaceDocumento, enlacePagina } from '../lib/datos.js';
 import { ir, reemplazar } from '../lib/ruta.js';
 import {
-  ESTADOS, MESES_REVISION, cuantoFalta, destinoWhatsApp, enlaceWhatsApp, enlacesFijos, fecha, fechaHora, primerNombre, reducirFoto, rellenar, telefonoWhatsApp,
+  ESTADOS, MESES_REVISION, cuantoFalta, destinoWhatsApp, enMismaPestana, enlaceWhatsApp, enlacesFijos, fecha, fechaHora, primerNombre, reducirFoto, rellenar, telefonoWhatsApp,
 } from '../lib/util.js';
 import { Campo, Icono, Vacio, avisar, intentar } from '../componentes.jsx';
 
@@ -63,10 +63,21 @@ export function Enviar({ paciente, modo }) {
     conEnlace(rellenar(elegida.texto, { ...variables, enlaces_documentos: enlacePagina(nueva) }), enlacePagina(nueva));
   }
 
-  function alAbrirWhatsApp() {
+  async function alAbrirWhatsApp(e) {
     const titulo = elegida === 'blanco' ? 'Mensaje libre' : elegida.titulo;
-    intentar(() => registrarEnvio(paciente, { tipo: modo, titulo, texto, esRecordatorio: elegida.uso === 'revision' }));
+    const anotar = () => intentar(() => registrarEnvio(paciente, { tipo: modo, titulo, texto, esRecordatorio: elegida.uso === 'revision' }));
     pendiente.current = null; // enviada: la página se queda
+    if (enMismaPestana()) {
+      // WhatsApp Web sustituye a la app en esta pestaña: antes de salir se anota el envío y se deja
+      // preparada la pantalla a la que se vuelve con la flecha Atrás.
+      e.preventDefault();
+      const destino = e.currentTarget.href;
+      await anotar();
+      reemplazar(`paciente/${paciente.id}`);
+      location.href = destino;
+      return;
+    }
+    anotar();
     // Se espera un momento para que el enlace a WhatsApp se abra antes de cambiar de pantalla.
     setTimeout(() => { avisar('Anotado en el historial'); reemplazar(`paciente/${paciente.id}`); }, 600);
   }

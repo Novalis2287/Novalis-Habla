@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useDatos } from '../lib/almacen.jsx';
 import { ir } from '../lib/ruta.js';
 import {
-  DIAS_AVISO, MESES_REVISION, cuantoFalta, destinoWhatsApp, diasHasta, enlaceWhatsApp, fecha, primerNombre, rellenar, telefonoWhatsApp,
+  DIAS_AVISO, MESES_REVISION, cuantoFalta, destinoWhatsApp, diasHasta, enMismaPestana, enlaceWhatsApp, fecha, primerNombre, rellenar, telefonoWhatsApp,
 } from '../lib/util.js';
 import { Vacio, avisar, intentar } from '../componentes.jsx';
 
@@ -27,7 +27,15 @@ export function Revisiones() {
   function Fila({ p }) {
     const texto = rellenar(plantilla?.texto ?? 'Hola {nombre}, ya toca tu revisión en Clínica Novalis.', { nombre: primerNombre(p.nombre) });
     const puede = !!telefonoWhatsApp(p.telefono);
-    const recordar = () => intentar(() => registrarEnvio(p, { tipo: 'mensaje', titulo: plantilla?.titulo ?? 'Recordatorio de revisión', texto, esRecordatorio: true }), 'Recordatorio anotado');
+    const anotar = () => intentar(() => registrarEnvio(p, { tipo: 'mensaje', titulo: plantilla?.titulo ?? 'Recordatorio de revisión', texto, esRecordatorio: true }), 'Recordatorio anotado');
+    async function recordar(e) {
+      if (!enMismaPestana()) return anotar();
+      // WhatsApp Web se abre en esta misma pestaña: primero se anota y luego se sale de la app.
+      e.preventDefault();
+      const destino = e.currentTarget.href;
+      await anotar();
+      location.href = destino;
+    }
     const hecha = () => { if (confirm(`¿Marcar la revisión de ${p.nombre} como hecha? La siguiente quedará para dentro de ${MESES_REVISION} meses.`)) intentar(() => revisionHecha(p), 'Revisión hecha'); };
     return (
       <li className="columna">

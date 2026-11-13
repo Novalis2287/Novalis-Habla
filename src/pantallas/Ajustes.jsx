@@ -35,7 +35,8 @@ export function Ajustes() {
 
 /* ---------- con qué se abre WhatsApp en este ordenador ---------- */
 const MODOS_WHATSAPP = [
-  { id: 'web', nombre: 'WhatsApp Web (navegador)', sub: 'Cada envío se abre en una pestaña nueva' },
+  { id: 'web', nombre: 'WhatsApp Web en una pestaña nueva', sub: 'Cada envío abre otra pestaña' },
+  { id: 'misma', nombre: 'WhatsApp Web en esta misma pestaña', sub: 'Sin pestañas nuevas. Después de enviar, vuelve aquí con la flecha Atrás del navegador' },
   { id: 'app', nombre: 'Aplicación de WhatsApp para el ordenador', sub: 'Todos los envíos van a la misma ventana, sin pestañas' },
 ];
 function WhatsAppOrdenador() {
@@ -51,7 +52,7 @@ function WhatsAppOrdenador() {
           </button>
         ))}
       </div>
-      <p className="hint">Solo afecta a este ordenador. La aplicación tiene que estar instalada y vinculada al WhatsApp Business de la clínica; la primera vez el navegador pide permiso para abrirla.</p>
+      <p className="hint">Solo afecta a este ordenador. WhatsApp Web funciona en una sola pestaña a la vez: si eliges «esta misma pestaña», cierra las demás pestañas de WhatsApp. La aplicación tiene que estar instalada y vinculada al WhatsApp Business de la clínica; la primera vez el navegador pide permiso para abrirla.</p>
     </div>
   );
 }

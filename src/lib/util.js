@@ -48,12 +48,15 @@ export function telefonoWhatsApp(telefono) {
 // En un ordenador se puede elegir (en Ajustes, y solo para ese equipo) con qué se abre WhatsApp:
 //  · 'web': WhatsApp Web. El navegador abre una pestaña nueva en cada envío; WhatsApp Web se aísla
 //    de la página que lo abre y no hay forma de reutilizar una pestaña suya ya abierta.
+//  · 'misma': WhatsApp Web en la propia pestaña de la app. No se abre ninguna pestaña; después de
+//    enviar se vuelve a la app con la flecha Atrás del navegador.
 //  · 'app': la aplicación de escritorio de WhatsApp. Todos los envíos van a la misma ventana.
 const CLAVE_WHATSAPP = 'novalis-habla-whatsapp';
 export const esOrdenador = () => !(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1));
-export function modoWhatsApp() { try { return localStorage.getItem(CLAVE_WHATSAPP) === 'app' ? 'app' : 'web'; } catch { return 'web'; } }
+export function modoWhatsApp() { try { const m = localStorage.getItem(CLAVE_WHATSAPP); return m === 'app' || m === 'misma' ? m : 'web'; } catch { return 'web'; } }
 export function ponerModoWhatsApp(modo) { try { localStorage.setItem(CLAVE_WHATSAPP, modo); } catch { /* sin almacenamiento: se queda en 'web' */ } }
 const conApp = () => esOrdenador() && modoWhatsApp() === 'app';
+export const enMismaPestana = () => esOrdenador() && modoWhatsApp() === 'misma';
 
 export function enlaceWhatsApp(telefono, texto) {
   const numero = telefonoWhatsApp(telefono), mensaje = encodeURIComponent(texto);
@@ -61,8 +64,8 @@ export function enlaceWhatsApp(telefono, texto) {
   // En el ordenador se va directo a WhatsApp Web, sin la página intermedia de wa.me.
   return esOrdenador() ? `https://web.whatsapp.com/send?phone=${numero}&text=${mensaje}` : `https://wa.me/${numero}?text=${mensaje}`;
 }
-// Atributos del enlace: la aplicación de escritorio se abre sin pestaña nueva.
-export const destinoWhatsApp = () => (conApp() ? {} : { target: '_blank', rel: 'noopener noreferrer' });
+// Atributos del enlace: solo el modo 'web' abre una pestaña nueva.
+export const destinoWhatsApp = () => (conApp() || enMismaPestana() ? {} : { target: '_blank', rel: 'noopener noreferrer' });
 
 // Enlaces fijos de la clínica. Los mensajes no llevan la dirección final sino una página
 // de la app, que es la que enseña la tarjeta de vista previa en WhatsApp y lleva al destino.
