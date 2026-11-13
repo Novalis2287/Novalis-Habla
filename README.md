@@ -63,7 +63,7 @@ Si cambia `supabase/esquema.sql`, vuelve a ejecutarlo entero en **SQL Editor** (
 | --- | --- |
 | `{nombre}` | Nombre de pila del paciente |
 | `{enlace_maps}` | Página «Cómo llegar a Clínica Novalis», que abre Google Maps |
-| `{enlace_conocenos}` | Página «Conozca Clínica Novalis», con los botones de Instagram y Facebook |
+| `{enlace_conocenos}` | Página «Conoce Clínica Novalis», con los botones de Instagram y Facebook |
 | `{enlace_instagram}`, `{enlace_facebook}` | Páginas que llevan directamente a cada red |
 | `{enlaces_documentos}` | Solo en «Tras la valoración»: enlace a la página personal del paciente |
 | `{documento}`, `{enlace}` | Solo en «Envío de documento»: título y enlace del PDF |

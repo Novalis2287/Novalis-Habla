@@ -1,6 +1,6 @@
 // Páginas de los enlaces fijos de la clínica, cada una con su tarjeta de vista previa:
 //   /ubicacion  → «Cómo llegar a Clínica Novalis», lleva a Google Maps
-//   /conocenos  → «Conozca Clínica Novalis», con los botones de Instagram y Facebook
+//   /conocenos  → «Conoce Clínica Novalis», con los botones de Instagram y Facebook
 //   /instagram, /facebook → llevan directamente a cada red
 // Las direcciones de destino no están en el código: el administrador las pone en Ajustes.
 import { ICONOS, enlacesClinica, esc, noDisponible, pagina } from '../lib/comun.mjs';
@@ -17,7 +17,7 @@ function redirigir({ origen, ruta, destino, tarjeta, icono, boton }) {
 }
 
 const CONOCENOS = {
-  titulo: 'Conozca Clínica Novalis',
+  titulo: 'Conoce Clínica Novalis',
   descripcion: 'La experiencia de nuestros pacientes y el trabajo que realizamos cada día.',
   imagen: 'tarjeta-conocenos.png',
 };
@@ -30,7 +30,7 @@ export default async req => {
   if (ruta === 'ubicacion') {
     return redirigir({
       origen, ruta, destino: enlaces.maps, icono: ICONOS.ubicacion(), boton: 'Abrir en Google Maps',
-      tarjeta: { titulo: 'Cómo llegar a Clínica Novalis', descripcion: 'Toque para ver nuestra ubicación y la ruta en Google Maps.', imagen: 'tarjeta-ubicacion.png' },
+      tarjeta: { titulo: 'Cómo llegar a Clínica Novalis', descripcion: 'Toca para ver nuestra ubicación y la ruta en Google Maps.', imagen: 'tarjeta-ubicacion.png' },
     });
   }
   if (ruta === 'instagram' || ruta === 'facebook') {

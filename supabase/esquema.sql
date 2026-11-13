@@ -293,16 +293,16 @@ on conflict (clave) do nothing;
 insert into public.plantillas (titulo, texto, uso, orden)
 select * from (values
   ('Bienvenida a Novalis',
-   E'{nombre}, le damos la más cordial bienvenida a Clínica Novalis.\n\nEs un placer contar con su confianza. Nuestro equipo cuida cada detalle para ofrecerle una atención personalizada y una odontología de la máxima calidad.\n\nQuedamos a su disposición por este medio para cualquier consulta.\n\n*Clínica Novalis*',
+   E'{nombre}, te damos la más cordial bienvenida a Clínica Novalis.\n\nEs un placer contar con tu confianza. Nuestro equipo cuida cada detalle para ofrecerte una atención personalizada y una odontología de la máxima calidad.\n\nQuedamos a tu disposición por este medio para cualquier consulta.\n\n*Clínica Novalis*',
    'general', 1),
   ('Cómo llegar',
-   E'{nombre}, para facilitarle la llegada, le compartimos nuestra ubicación:\n\n📍 {enlace_maps}\n\nSerá un placer recibirle.\n\n*Clínica Novalis*',
+   E'{nombre}, para facilitarte la llegada, te compartimos nuestra ubicación:\n\n📍 {enlace_maps}\n\nSerá un placer recibirte.\n\n*Clínica Novalis*',
    'general', 2),
   ('Conócenos',
-   E'{nombre}, le invitamos a conocer Clínica Novalis a través de la experiencia de nuestros pacientes y del trabajo que realizamos cada día:\n\n✨ {enlace_conocenos}\n\n*Clínica Novalis*',
+   E'{nombre}, te invitamos a conocer Clínica Novalis a través de la experiencia de nuestros pacientes y del trabajo que realizamos cada día:\n\n✨ {enlace_conocenos}\n\n*Clínica Novalis*',
    'general', 3),
   ('Tras la valoración',
-   E'{nombre}, gracias por su visita.\n\nTal como le comentamos en la valoración, ponemos a su disposición sus fotografías intraorales y una selección de documentos sobre salud dental, preparados por nuestro equipo para acompañarle en su tratamiento:\n\n📄 {enlaces_documentos}\n\nEste enlace es personal y confidencial. Para cualquier duda, estaremos encantados de atenderle.\n\n*Clínica Novalis*',
+   E'{nombre}, gracias por tu visita.\n\nTal como te comentamos en la valoración, ponemos a tu disposición tus fotografías intraorales y una selección de documentos sobre salud dental, preparados por nuestro equipo para acompañarte en tu tratamiento:\n\n📄 {enlaces_documentos}\n\nEste enlace es personal y confidencial. Para cualquier duda, estaremos encantados de atenderte.\n\n*Clínica Novalis*',
    'valoracion', 4)
 ) as clinica (titulo, texto, uso, orden)
 where not exists (select 1 from public.ajustes where clave = 'plantillas_clinica');

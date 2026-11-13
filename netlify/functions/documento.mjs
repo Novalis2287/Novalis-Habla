@@ -11,7 +11,7 @@ export default async (req, context) => {
 
   const origen = new URL(req.url).origin;
   const pdf = `${URL_BD}/storage/v1/object/public/documentos/${encodeURIComponent(doc.ruta)}`;
-  const descripcion = doc.descripcion || 'Documento PDF de Clínica Novalis. Toque para abrirlo.';
+  const descripcion = doc.descripcion || 'Documento PDF de Clínica Novalis. Toca para abrirlo.';
 
   return pagina({
     origen,

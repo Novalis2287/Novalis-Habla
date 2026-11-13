@@ -117,7 +117,7 @@ ${cabecera}
   });
 }
 
-export const noDisponible = (titulo = 'Enlace no disponible', texto = 'Este enlace ya no funciona. Pida a la clínica que se lo envíe de nuevo.', privada = false) =>
+export const noDisponible = (titulo = 'Enlace no disponible', texto = 'Este enlace ya no funciona. Pide a la clínica que te lo envíe de nuevo.', privada = false) =>
   pagina({ cuerpo: `${ICONOS.documento()}<h1>${esc(titulo)}</h1><p>${esc(texto)}</p>`, cabecera: `<title>${esc(titulo)}</title>`, estado: 404, privada });
 
 // ¿Es el robot de WhatsApp/Meta que viene a por la tarjeta de vista previa?
