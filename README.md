@@ -55,7 +55,7 @@ Si cambia `supabase/esquema.sql`, vuelve a ejecutarlo entero en **SQL Editor** (
 
 - **iPhone**: abrir en Safari → Compartir → **Añadir a pantalla de inicio**.
 - **Android**: abrir en Chrome → menú → **Añadir a pantalla de inicio** o **Instalar app**.
-- **Windows**: abrir en Chrome o Edge → icono de instalar en la barra de direcciones. Para enviar desde el ordenador, WhatsApp de escritorio o WhatsApp Web tiene que estar vinculado al WhatsApp Business de la clínica.
+- **Windows**: abrir en Chrome o Edge → icono de instalar en la barra de direcciones. Para enviar desde el ordenador, WhatsApp de escritorio o WhatsApp Web tiene que estar vinculado al WhatsApp Business de la clínica. En **Ajustes → WhatsApp en este ordenador** se elige cuál se usa: con WhatsApp Web cada envío abre una pestaña nueva (el navegador no permite reutilizar la que ya está abierta); con la aplicación de escritorio todos van a la misma ventana.
 
 ## Variables de las plantillas
 

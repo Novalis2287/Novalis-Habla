@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useDatos } from '../lib/almacen.jsx';
 import { DEMO, enlaceDocumento, reiniciarDemo, sesion, urlPdf } from '../lib/datos.js';
+import { esOrdenador, modoWhatsApp, ponerModoWhatsApp } from '../lib/util.js';
 import { Campo, Hoja, Vacio, avisar, intentar } from '../componentes.jsx';
 
 export function Ajustes() {
@@ -13,6 +14,7 @@ export function Ajustes() {
       <Origenes />
       {yo?.admin && <Enlaces />}
       {yo?.admin && <Usuarios />}
+      {esOrdenador() && <WhatsAppOrdenador />}
       <div className="card">
         <h2>Sesión</h2>
         {DEMO ? (
@@ -28,6 +30,29 @@ export function Ajustes() {
         )}
       </div>
     </>
+  );
+}
+
+/* ---------- con qué se abre WhatsApp en este ordenador ---------- */
+const MODOS_WHATSAPP = [
+  { id: 'web', nombre: 'WhatsApp Web (navegador)', sub: 'Cada envío se abre en una pestaña nueva' },
+  { id: 'app', nombre: 'Aplicación de WhatsApp para el ordenador', sub: 'Todos los envíos van a la misma ventana, sin pestañas' },
+];
+function WhatsAppOrdenador() {
+  const [modo, setModo] = useState(modoWhatsApp);
+  const elegir = id => { ponerModoWhatsApp(id); setModo(id); avisar('Guardado para este ordenador'); };
+  return (
+    <div className="card">
+      <h2>WhatsApp en este ordenador</h2>
+      <div className="opciones">
+        {MODOS_WHATSAPP.map(m => (
+          <button key={m.id} className={`opcion${modo === m.id ? ' on' : ''}`} aria-pressed={modo === m.id} onClick={() => elegir(m.id)}>
+            <b>{m.nombre}</b><small>{m.sub}</small>
+          </button>
+        ))}
+      </div>
+      <p className="hint">Solo afecta a este ordenador. La aplicación tiene que estar instalada y vinculada al WhatsApp Business de la clínica; la primera vez el navegador pide permiso para abrirla.</p>
+    </div>
   );
 }
 

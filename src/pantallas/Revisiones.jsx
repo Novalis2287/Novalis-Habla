@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useDatos } from '../lib/almacen.jsx';
 import { ir } from '../lib/ruta.js';
 import {
-  DIAS_AVISO, MESES_REVISION, cuantoFalta, diasHasta, enlaceWhatsApp, fecha, primerNombre, rellenar, telefonoWhatsApp,
+  DIAS_AVISO, MESES_REVISION, cuantoFalta, destinoWhatsApp, diasHasta, enlaceWhatsApp, fecha, primerNombre, rellenar, telefonoWhatsApp,
 } from '../lib/util.js';
 import { Vacio, avisar, intentar } from '../componentes.jsx';
 
@@ -38,7 +38,7 @@ export function Revisiones() {
         </button>
         <div className="btns">
           {puede
-            ? <a className="btn wa" href={enlaceWhatsApp(p.telefono, texto)} target="_blank" rel="noopener noreferrer" onClick={recordar}>Recordar</a>
+            ? <a className="btn wa" href={enlaceWhatsApp(p.telefono, texto)} {...destinoWhatsApp()} onClick={recordar}>Recordar</a>
             : <button className="btn wa" disabled onClick={() => avisar('Falta el teléfono')}>Sin teléfono</button>}
           <button className="btn ghost" onClick={hecha}>Revisión hecha</button>
         </div>

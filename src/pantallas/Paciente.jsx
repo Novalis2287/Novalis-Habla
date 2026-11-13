@@ -4,7 +4,7 @@ import { useDatos } from '../lib/almacen.jsx';
 import { DEMO, DIAS_PAGINA, enlaceDocumento, enlacePagina } from '../lib/datos.js';
 import { ir, reemplazar } from '../lib/ruta.js';
 import {
-  ESTADOS, MESES_REVISION, cuantoFalta, enlaceWhatsApp, enlacesFijos, fecha, fechaHora, primerNombre, reducirFoto, rellenar, telefonoWhatsApp,
+  ESTADOS, MESES_REVISION, cuantoFalta, destinoWhatsApp, enlaceWhatsApp, enlacesFijos, fecha, fechaHora, primerNombre, reducirFoto, rellenar, telefonoWhatsApp,
 } from '../lib/util.js';
 import { Campo, Icono, Vacio, avisar, intentar } from '../componentes.jsx';
 
@@ -97,7 +97,7 @@ export function Enviar({ paciente, modo }) {
           {(esPdf || pagina) && DEMO && <p className="hint">En el modo demostración el enlace no funciona.</p>}
           <p className="hint">Se abrirá WhatsApp con el chat de {nombre} y este texto escrito. Allí solo tienes que pulsar enviar.</p>
           {texto.trim()
-            ? <a className="btn wa" href={enlaceWhatsApp(paciente.telefono, texto)} target="_blank" rel="noopener noreferrer" onClick={alAbrirWhatsApp}>Abrir WhatsApp</a>
+            ? <a className="btn wa" href={enlaceWhatsApp(paciente.telefono, texto)} {...destinoWhatsApp()} onClick={alAbrirWhatsApp}>Abrir WhatsApp</a>
             : <button className="btn wa" disabled>Abrir WhatsApp</button>}
         </div>
       )}

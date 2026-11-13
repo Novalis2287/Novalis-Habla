@@ -44,8 +44,25 @@ export function telefonoWhatsApp(telefono) {
   if (n.length === 9) n = '34' + n;
   return n.length >= 10 ? n : '';
 }
-export const enlaceWhatsApp = (telefono, texto) =>
-  `https://wa.me/${telefonoWhatsApp(telefono)}?text=${encodeURIComponent(texto)}`;
+
+// En un ordenador se puede elegir (en Ajustes, y solo para ese equipo) con qué se abre WhatsApp:
+//  · 'web': WhatsApp Web. El navegador abre una pestaña nueva en cada envío; WhatsApp Web se aísla
+//    de la página que lo abre y no hay forma de reutilizar una pestaña suya ya abierta.
+//  · 'app': la aplicación de escritorio de WhatsApp. Todos los envíos van a la misma ventana.
+const CLAVE_WHATSAPP = 'novalis-habla-whatsapp';
+export const esOrdenador = () => !(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1));
+export function modoWhatsApp() { try { return localStorage.getItem(CLAVE_WHATSAPP) === 'app' ? 'app' : 'web'; } catch { return 'web'; } }
+export function ponerModoWhatsApp(modo) { try { localStorage.setItem(CLAVE_WHATSAPP, modo); } catch { /* sin almacenamiento: se queda en 'web' */ } }
+const conApp = () => esOrdenador() && modoWhatsApp() === 'app';
+
+export function enlaceWhatsApp(telefono, texto) {
+  const numero = telefonoWhatsApp(telefono), mensaje = encodeURIComponent(texto);
+  if (conApp()) return `whatsapp://send?phone=${numero}&text=${mensaje}`;
+  // En el ordenador se va directo a WhatsApp Web, sin la página intermedia de wa.me.
+  return esOrdenador() ? `https://web.whatsapp.com/send?phone=${numero}&text=${mensaje}` : `https://wa.me/${numero}?text=${mensaje}`;
+}
+// Atributos del enlace: la aplicación de escritorio se abre sin pestaña nueva.
+export const destinoWhatsApp = () => (conApp() ? {} : { target: '_blank', rel: 'noopener noreferrer' });
 
 // Enlaces fijos de la clínica. Los mensajes no llevan la dirección final sino una página
 // de la app, que es la que enseña la tarjeta de vista previa en WhatsApp y lleva al destino.
