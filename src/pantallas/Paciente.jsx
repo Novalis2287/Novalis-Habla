@@ -20,7 +20,7 @@ export function PacienteInicio({ paciente }) {
       </button>
       <button className="accion" onClick={() => ir(`paciente/${paciente.id}/pdf`)} disabled={sinTelefono}>
         <Icono nombre="pdf" tam={34} />
-        <span><b>Enviar PDF</b><small>Documentos de la biblioteca</small></span>
+        <span><b>Enviar documento</b><small>PDF e imágenes de la biblioteca</small></span>
       </button>
       <button className="btn ghost con-icono" onClick={() => ir(`paciente/${paciente.id}/datos`)}>
         <Icono nombre="ficha" tam={20} /> Datos del paciente

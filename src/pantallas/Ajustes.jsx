@@ -1,7 +1,7 @@
-// Ajustes: plantillas, biblioteca de PDF, lista "cómo nos han conocido" y, solo para el administrador, enlaces de la clínica y usuarios.
+// Ajustes: plantillas, biblioteca de documentos, lista "cómo nos han conocido" y, solo para el administrador, enlaces de la clínica y usuarios.
 import { useEffect, useState } from 'react';
 import { useDatos } from '../lib/almacen.jsx';
-import { DEMO, enlaceDocumento, reiniciarDemo, sesion, urlPdf } from '../lib/datos.js';
+import { DEMO, TIPOS_DOCUMENTO, enlaceDocumento, reiniciarDemo, sesion, urlPdf } from '../lib/datos.js';
 import { esOrdenador, modoWhatsApp, ponerModoWhatsApp } from '../lib/util.js';
 import { Campo, Hoja, Vacio, avisar, intentar } from '../componentes.jsx';
 
@@ -60,8 +60,8 @@ function WhatsAppOrdenador() {
 /* ---------- plantillas de mensajes ---------- */
 const AYUDA_USO = {
   revision: 'Es el mensaje que se envía con un toque desde Revisiones.',
-  pdf: 'Es el texto que acompaña a cada PDF. {documento} es el título y {enlace} el enlace al documento.',
-  valoracion: 'Antes de enviarla se eligen los PDF y las fotos del paciente; {enlaces_documentos} es el enlace a su página personal.',
+  pdf: 'Es el texto que acompaña a cada documento de la biblioteca. {documento} es el título y {enlace} el enlace al documento.',
+  valoracion: 'Antes de enviarla se eligen los documentos y las fotos del paciente; {enlaces_documentos} es el enlace a su página personal.',
 };
 
 function Plantillas() {
@@ -110,8 +110,9 @@ function Plantillas() {
   );
 }
 
-/* ---------- biblioteca de PDF ---------- */
-const MAX_PDF = 10 * 1024 * 1024;
+/* ---------- biblioteca de documentos: PDF e imágenes ---------- */
+const MAX_ARCHIVO = 10 * 1024 * 1024;
+const ACEPTA = Object.keys(TIPOS_DOCUMENTO).join(',');
 
 function Documentos() {
   const { documentos, subirDocumento, borrarDocumento } = useDatos();
@@ -122,9 +123,9 @@ function Documentos() {
     const archivo = e.target.files[0];
     e.target.value = '';
     if (!archivo) return;
-    if (archivo.type !== 'application/pdf') return avisar('El archivo tiene que ser un PDF');
-    if (archivo.size > MAX_PDF) return avisar('El PDF no puede pasar de 10 MB');
-    setNuevo({ archivo, titulo: archivo.name.replace(/\.pdf$/i, '').replace(/[_-]+/g, ' '), descripcion: '' });
+    if (!TIPOS_DOCUMENTO[archivo.type]) return avisar('El archivo tiene que ser PDF, PNG o JPG');
+    if (archivo.size > MAX_ARCHIVO) return avisar('El archivo no puede pasar de 10 MB');
+    setNuevo({ archivo, titulo: archivo.name.replace(/\.(pdf|png|jpe?g)$/i, '').replace(/[_-]+/g, ' '), descripcion: '' });
   }
   async function subir(e) {
     e.preventDefault();
@@ -140,7 +141,7 @@ function Documentos() {
 
   return (
     <div className="card">
-      <h2>Biblioteca de PDF</h2>
+      <h2>Biblioteca de documentos</h2>
       {documentos.length === 0 ? <Vacio>Aún no hay documentos.</Vacio> : (
         <ul className="list">
           {documentos.map(d => (
@@ -156,12 +157,12 @@ function Documentos() {
         </ul>
       )}
       <label className="btn ghost">
-        Añadir PDF
-        <input type="file" accept="application/pdf" hidden onChange={elegirArchivo} />
+        Añadir archivo (PDF, PNG o JPG)
+        <input type="file" accept={ACEPTA} hidden onChange={elegirArchivo} />
       </label>
-      <p className="hint">Solo documentos generales (indicaciones, cuidados…). Nunca informes con datos de un paciente: el enlace es público.</p>
+      <p className="hint">Solo documentos generales (indicaciones, cuidados…). Nunca informes ni fotos con datos de un paciente: el enlace es público.</p>
       {nuevo && (
-        <Hoja titulo="Añadir PDF" alCerrar={() => !subiendo && setNuevo(null)}>
+        <Hoja titulo="Añadir archivo" alCerrar={() => !subiendo && setNuevo(null)}>
           <form onSubmit={subir}>
             <p className="hint arriba">{nuevo.archivo.name}</p>
             <Campo etiqueta="Título (lo verá el paciente)"><input value={nuevo.titulo} onChange={e => setNuevo({ ...nuevo, titulo: e.target.value })} /></Campo>

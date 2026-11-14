@@ -14,7 +14,7 @@ Funciona en iPhone, Android y Windows como app web instalable (PWA).
 - **Tras la valoración**: al elegir esa plantilla se seleccionan PDF de la biblioteca y fotos intraorales del paciente. La app crea con ello una página personal del paciente y pone en el mensaje un único enlace a ella.
 - **Revisiones**: quién tiene la revisión semestral vencida o próxima, con recordatorio a un toque.
 - **Seguimiento**: primeras visitas, cómo nos han conocido, estado del plan (aceptado, pensando, no aceptado), anotaciones, fecha para volver a llamar y estadísticas por mes.
-- **Ajustes**: plantillas, biblioteca de PDF y, para el administrador, los enlaces de la clínica (Google Maps, Instagram y Facebook) y los usuarios con acceso.
+- **Ajustes**: plantillas, biblioteca de documentos (PDF e imágenes PNG o JPG) y, para el administrador, los enlaces de la clínica (Google Maps, Instagram y Facebook) y los usuarios con acceso.
 
 ## Modo demostración
 
@@ -74,7 +74,7 @@ Un texto entre asteriscos, como `*Clínica Novalis*`, sale en negrita en WhatsAp
 
 - Los datos de pacientes están solo en la base de datos, y solo los ven los usuarios autorizados (`supabase/esquema.sql`).
 - Nadie puede crear una cuenta si el administrador no ha autorizado antes su correo.
-- Los PDF de la biblioteca son públicos para quien tenga el enlace. Deben ser documentos generales, nunca informes de un paciente.
+- Los archivos de la biblioteca (PDF e imágenes) son públicos para quien tenga el enlace. Deben ser documentos generales, nunca informes de un paciente.
 - Las fotos intraorales son datos de salud y se tratan aparte:
   - Se guardan en un almacén privado; antes de subirlas se reducen y se les quitan los datos ocultos de la cámara.
   - La página personal del paciente tiene una dirección aleatoria de 32 caracteres, imposible de adivinar, y caduca a los 30 días. Las fotos se sirven con enlaces firmados que caducan a la vez.

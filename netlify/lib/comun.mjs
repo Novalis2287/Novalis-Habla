@@ -69,7 +69,9 @@ const ESTILO = `
   .docs a { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #dde5e4; border-radius: 14px;
             margin-top: 8px; color: inherit; text-decoration: none; }
   .docs .ico { width: 48px; height: 48px; padding: 9px; border-radius: 12px; flex: none; }
+  .docs img { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; flex: none; background: #e2f1f8; }
   .docs b { display: block; }
+  img.vista { display: block; max-width: 100%; max-height: 60vh; margin: 0 auto 4px; border-radius: 12px; }
   .docs span span { display: block; font-size: 14px; color: #647471; }
   footer { text-align: center; color: #647471; font-size: 13px; padding: 18px 16px 28px; }
 `;
@@ -79,6 +81,7 @@ const ESTILO = `
 // van a buscar la tarjeta a esa dirección en vez de a la del enlace. "titulo" es el nombre de la pestaña.
 // Las páginas privadas no se guardan en ninguna caché ni dejan rastro de su dirección al salir de ellas.
 export function pagina({ cuerpo, tarjeta, origen, titulo, estado = 200, cabecera = '', privada = false, ancho = false }) {
+  const propia = /^https?:\/\//.test(tarjeta?.imagen ?? ''); // imagen con dirección completa (no una de las tarjetas de la app)
   const og = tarjeta ? `<title>${esc(titulo ?? `${tarjeta.titulo} · ${APP}`)}</title>
 <meta name="description" content="${esc(tarjeta.descripcion)}">
 <meta property="og:type" content="website">
@@ -87,10 +90,10 @@ export function pagina({ cuerpo, tarjeta, origen, titulo, estado = 200, cabecera
 <meta property="og:title" content="${esc(tarjeta.titulo)}">
 <meta property="og:description" content="${esc(tarjeta.descripcion)}">
 ${tarjeta.url ? `<meta property="og:url" content="${esc(tarjeta.url)}">` : ''}
-<meta property="og:image" content="${esc(`${origen}/${tarjeta.imagen}`)}">
-<meta property="og:image:type" content="image/png">
+<meta property="og:image" content="${esc(propia ? tarjeta.imagen : `${origen}/${tarjeta.imagen}`)}">
+${propia ? '' : `<meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image:height" content="630">`}
 <meta property="og:image:alt" content="${esc(tarjeta.titulo)}">
 <meta name="twitter:card" content="summary_large_image">` : '';
   return new Response(`<!doctype html>
@@ -124,6 +127,10 @@ ${cabecera}
     },
   });
 }
+
+// Los archivos de la biblioteca son PDF o imágenes (PNG, JPG); se distinguen por la extensión.
+export const esImagen = ruta => /\.(png|jpe?g)$/i.test(ruta ?? '');
+export const urlBiblioteca = ruta => `${URL_BD}/storage/v1/object/public/documentos/${encodeURIComponent(ruta)}`;
 
 export const noDisponible = (titulo = 'Enlace no disponible', texto = 'Este enlace ya no funciona. Pide a la clínica que te lo envíe de nuevo.', privada = false) =>
   pagina({ cuerpo: `${ICONOS.documento()}<h1>${esc(titulo)}</h1><p>${esc(texto)}</p>`, cabecera: `<title>${esc(titulo)}</title>`, estado: 404, privada });

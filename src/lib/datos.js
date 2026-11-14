@@ -65,18 +65,19 @@ export async function borrar(tabla, valor, clave = 'id') {
   ok(await supabase.from(tabla).delete().eq(clave, valor));
 }
 
-/* ---------- documentos PDF ---------- */
+/* ---------- biblioteca de documentos (PDF e imágenes PNG o JPG) ---------- */
+export const TIPOS_DOCUMENTO = { 'application/pdf': 'pdf', 'image/png': 'png', 'image/jpeg': 'jpg' };
 export async function subirDocumento({ archivo, titulo, descripcion }) {
   const id = idCorto();
-  const fila = { id, titulo, descripcion, ruta: DEMO ? '' : `${id}.pdf`, creado: new Date().toISOString() };
-  if (!DEMO) ok(await supabase.storage.from('documentos').upload(fila.ruta, archivo, { contentType: 'application/pdf' }));
+  const fila = { id, titulo, descripcion, ruta: DEMO ? '' : `${id}.${TIPOS_DOCUMENTO[archivo.type]}`, creado: new Date().toISOString() };
+  if (!DEMO) ok(await supabase.storage.from('documentos').upload(fila.ruta, archivo, { contentType: archivo.type }));
   return guardar('documentos', fila);
 }
 export async function borrarDocumento(doc) {
   if (!DEMO && doc.ruta) ok(await supabase.storage.from('documentos').remove([doc.ruta]));
   await borrar('documentos', doc.id);
 }
-// Enlace que se manda al paciente: una página con vista previa que abre el PDF.
+// Enlace que se manda al paciente: una página con vista previa que abre el PDF o la imagen.
 export const enlaceDocumento = doc => `${location.origin}/d/${doc.id}`;
 export const urlPdf = doc => (DEMO || !doc.ruta ? '' : supabase.storage.from('documentos').getPublicUrl(doc.ruta).data.publicUrl);
 

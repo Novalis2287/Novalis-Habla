@@ -70,7 +70,7 @@ alter table public.plantillas drop constraint if exists plantillas_uso_check;
 alter table public.plantillas add constraint plantillas_uso_check
   check (uso in ('general', 'revision', 'pdf', 'valoracion'));
 
--- Biblioteca de PDF. El archivo está en el almacenamiento, en "ruta".
+-- Biblioteca de documentos (PDF e imágenes PNG o JPG). El archivo está en el almacenamiento, en "ruta".
 create table if not exists public.documentos (
   id          text primary key,
   titulo      text not null,
@@ -222,11 +222,11 @@ create policy documentos_baja on public.documentos for delete to authenticated
   using (public.autorizado());
 
 -- ---------------------------------------------------------------------------
--- Almacenamiento de los PDF (documentos generales, nunca datos de pacientes)
+-- Almacenamiento de la biblioteca (documentos e imágenes generales, nunca datos de pacientes)
 -- ---------------------------------------------------------------------------
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('documentos', 'documentos', true, 10485760, array['application/pdf'])
+values ('documentos', 'documentos', true, 10485760, array['application/pdf', 'image/png', 'image/jpeg'])
 on conflict (id) do update
   set public = excluded.public,
       file_size_limit = excluded.file_size_limit,

@@ -37,7 +37,7 @@ const SECCIONES = [
   { id: 'seguimiento', nombre: 'Seguimiento', sub: 'Primeras visitas y planes de tratamiento' },
   { id: 'ajustes', nombre: 'Ajustes', sub: '' },
 ];
-const TITULOS_PACIENTE = { mensaje: 'Enviar mensaje', pdf: 'Enviar PDF', datos: 'Datos del paciente' };
+const TITULOS_PACIENTE = { mensaje: 'Enviar mensaje', pdf: 'Enviar documento', datos: 'Datos del paciente' };
 
 function Interior() {
   const { estado, yo, email, pacientes, recargar } = useDatos();
