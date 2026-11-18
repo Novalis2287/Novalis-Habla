@@ -27,7 +27,7 @@ Sin base de datos configurada, la app arranca con pacientes **inventados** que s
 1. Crea una cuenta en [supabase.com](https://supabase.com) y un proyecto nuevo. En la región elige una de la Unión Europea (por ejemplo, Fráncfort).
 2. Abre **SQL Editor**, pega el contenido completo de [`supabase/esquema.sql`](supabase/esquema.sql), cambia el correo de la última línea por el del administrador (en minúsculas) y pulsa **Run**.
 3. En **Authentication**, deja activada la confirmación del correo (viene así por defecto).
-4. En los ajustes del proyecto, apartado **API**, copia la **Project URL** y la clave pública (**anon** o **publishable**). Esta clave no es secreta: el acceso lo controlan las reglas de la base de datos. La clave **service_role** sí es secreta y no se usa en ningún sitio.
+4. En los ajustes del proyecto, apartado **API**, copia la **Project URL** y la clave **publicable** (empieza por `sb_publishable_`; la antigua **anon** dejará de funcionar a principios de 2027). Esta clave no es secreta: el acceso lo controlan las reglas de la base de datos. La clave **service_role** sí es secreta y no se usa en ningún sitio.
 
 ### 2. Publicación (Netlify)
 

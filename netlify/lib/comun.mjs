@@ -21,7 +21,8 @@ export async function bd(ruta, opciones = {}) {
   try {
     const res = await fetch(`${URL_BD}/rest/v1/${ruta}`, {
       ...opciones,
-      headers: { apikey: CLAVE_BD, authorization: `Bearer ${CLAVE_BD}`, 'content-type': 'application/json', ...opciones.headers },
+      // Las claves antiguas (anon) son JWT y van también como Bearer; las nuevas (sb_publishable_…) solo en apikey.
+      headers: { apikey: CLAVE_BD, ...(CLAVE_BD.startsWith('eyJ') ? { authorization: `Bearer ${CLAVE_BD}` } : {}), 'content-type': 'application/json', ...opciones.headers },
     });
     return res.ok ? await res.json() : null;
   } catch { return null; } // sin conexión con la base de datos
